@@ -2,13 +2,13 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/md019066/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="markadavenport"
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -70,9 +70,41 @@ ZSH_THEME="markadavenport"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions kubectl)
+plugins=(git zsh-autosuggestions asdf kubectl)
+
+# Ruby specific compile flags
+export RUBY_CFLAGS="-Wno-error=implicit-function-declaration"
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+
+# Kubernetes alias
+alias kc="kubectl"
+
+# GPG TTY
+export GPG_TTY=$(tty)
+
+# append completions to fpath
+fpath=(${ASDF_DIR}/completions $fpath)
+
+# Python build
+export ARCHFLAGS="-arch arm64"
+
+# Elixir/Erlang enable shell history
+export ERL_AFLAGS="-kernel shell_history enabled"
+
+# Direnv
+eval "$(direnv hook zsh)"
+
+# Starship
+eval "$(starship init zsh)"
 
 source $ZSH/oh-my-zsh.sh
+
+# Functions 
+
+k8s_secret() { 
+ kubectl get secret $1 -o go-template='
+{{range $k,$v := .data}}{{printf "%s: " $k}}{{if not $v}}{{$v}}{{else}}{{$v | base64decode}}{{end}}{{"\n"}}{{end}}'
+}
 
 # User configuration
 
