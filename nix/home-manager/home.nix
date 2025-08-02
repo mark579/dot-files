@@ -23,6 +23,9 @@
     pkgs.hello
     (pkgs.google-cloud-sdk.withExtraComponents [pkgs.google-cloud-sdk.components.gke-gcloud-auth-plugin])
     pkgs.kubectx  # Adds kubectx and kubens for managing Kubernetes contexts and namespaces
+    pkgs.asdf-vm  # Add ASDF version manager
+    pkgs.docker   # Docker CLI and daemon
+    pkgs.docker-compose  # Docker Compose
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
@@ -73,6 +76,9 @@
     NIXPKGS_ALLOW_INSECURE = "1";
     NIXPKGS_ALLOW_UNFREE = "1";
     NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM = "1";
+    OBJC_DISABLE_INITIALIZE_FORK_SAFETY = "YES";
+    PATH = "/Users/markdavenport/.dotnet/tools:\${PATH}";
+    DOTNET_ENVIRONMENT = "Development";
   };
 
   # Let Home Manager install and manage itself.
@@ -95,6 +101,13 @@
     enableCompletion = true;
     syntaxHighlighting.enable = true;
     autosuggestion.enable = true;
+
+    initExtra = ''
+      # ASDF setup
+      . ${pkgs.asdf-vm}/share/asdf-vm/asdf.sh
+      fpath=(${pkgs.asdf-vm}/share/asdf-vm/completions $fpath)
+      autoload -Uz compinit && compinit
+    '';
 
     # Add custom aliases
     shellAliases = {
@@ -128,7 +141,7 @@
     
     # Your personal Git configuration
     userName = "Mark Davenport";
-    userEmail = "mdavenport@beterra.com";  # Replace with your email
+    userEmail = "markadavenport@gmail.com";  # Replace with your email
 
     # Default Git configurations
     extraConfig = {
@@ -280,6 +293,17 @@
       vim-airline-themes   # Themes for vim-airline
       vim-nix             # Nix syntax highlighting
     ];
+  };
+
+  # Enable and configure tmux
+  programs.tmux = {
+    enable = true;
+    mouse = true;  # Enable mouse support
+    terminal = "xterm-256color";  # Set default terminal
+    extraConfig = ''
+      # Make sure tmux doesn't interfere with terminal URL detection
+      set -ga terminal-overrides ',xterm*:Tc'
+    '';
   };
 }
 
