@@ -1,0 +1,60 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "command": {
+    "commit": {
+      "template": "Look at the changes on this branch and commit them. Be sure to include a commit message that describes the changes.",
+      "description": "Commit the changes to the repository.",
+      "agent": "build",
+      "model": "opencode/big-pickle"
+    },
+    "pr": {
+      "template": "Look at the changes on this branch and create a pull request. Be sure to include a pull request title that describes the changes.",
+      "description": "Create a pull request for the changes.",
+      "agent": "build",
+      "model": "opencode/big-pickle"
+    },
+    "build_status": {
+      "template": "Monitor the build status in CircleCi and Github for the open PR for this branch and look for any issue and attempt to fix them. Don't commit any changes, and ask me first before making changes.",
+      "description": "Check build stats and attempt to fix any issues.",
+      "agent": "build",
+      "model": "opencode/claude-sonnet-4-5"
+    }
+  },
+  "mcp": {
+    "circleci": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@circleci/mcp-server-circleci@latest"
+      ],
+      "environment": {
+        "CIRCLECI_TOKEN": "{env:CIRCLECI_TOKEN}"
+      },
+      "enabled": true
+    },
+    "linear": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-remote",
+        "https://mcp.linear.app/mcp"
+      ],
+      "environment": {
+        "LINEAR_API_KEY": "{env:LINEAR_API_KEY}"
+      },
+      "enabled": true
+    },
+    "angular": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@angular/cli",
+        "mcp"
+      ],
+      "enabled": true
+    }
+  }
+}
